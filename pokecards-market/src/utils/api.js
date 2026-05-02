@@ -60,16 +60,40 @@ export const TYPE_META = {
  * @returns {Promise<Array>} Lista de cartas con todos sus metadatos.
  */
 export const fetchPokemonCards = async (count = 30) => {
-  // 1) Obtener la lista paginada de Pokémon
-  const list = await axios.get(`${POKEAPI_BASE}/pokemon`, {
-    params: { limit: count, offset: 0 }
-  })
+  // IDs específicos: primeros 20 + 10 legendarios/icónicos garantizados
+  const specificIds = [
+    // Starters icónicos
+    1, 4, 7, 25, 39, 52, 54, 58, 63, 66,
+    // Más populares
+    94, 113, 116, 123, 129, 130, 131, 132, 133,
+    // Legendarios icónicos
+    144, // Articuno
+    145, // Zapdos
+    146, // Moltres
+    147, // Dratini
+    148, // Dragonair
+    149, // Dragonite
+    150, // Mewtwo ⭐
+    151, // Mew ⭐
+    243, // Raikou
+    244, // Entei
+    245, // Suicune
+    249, // Lugia ⭐
+    250, // Ho-Oh ⭐
+    384, // Rayquaza ⭐
+    483, // Dialga ⭐
+    484, // Palkia ⭐
+    487, // Giratina ⭐
+    643, // Reshiram ⭐
+    644, // Zekrom ⭐
+    716, // Xerneas ⭐
+  ]
 
-  // 2) Hacer todas las llamadas de detalle en paralelo (mucho más rápido que en serie)
-  const detailPromises = list.data.results.map(p => axios.get(p.url))
+  const detailPromises = specificIds.map(id =>
+    axios.get(`${POKEAPI_BASE}/pokemon/${id}`)
+  )
   const responses = await Promise.all(detailPromises)
 
-  // 3) Normalizar la respuesta a un objeto de carta limpio y predecible
   return responses.map(({ data }) => {
     const statsTotal = data.stats.reduce((sum, s) => sum + s.base_stat, 0)
     const rarity = getRarity(statsTotal)
@@ -78,7 +102,6 @@ export const fetchPokemonCards = async (count = 30) => {
     return {
       id: data.id,
       name: data.name,
-      // Imagen oficial de alta calidad; fallback al sprite si no existe
       image:
         data.sprites.other?.['official-artwork']?.front_default ||
         data.sprites.front_default,
@@ -90,8 +113,8 @@ export const fetchPokemonCards = async (count = 30) => {
       statsTotal,
       rarity,
       price,
-      height: data.height / 10,   // PokéAPI devuelve decímetros → metros
-      weight: data.weight / 10,   // PokéAPI devuelve hectogramos → kg
+      height: data.height / 10,
+      weight: data.weight / 10,
     }
   })
 }
