@@ -54,18 +54,23 @@ export const usePurchasedCards = () => {
   }, [purchased])
 
   const addPurchase = (card) => {
-    setPurchased(prev => {
-      if (prev.some(p => p.id === card.id)) return prev
-      return [...prev, {
-        id: card.id,
-        name: card.name,
-        image: card.image,
-        price: card.price,
-        rarity: card.rarity,
-        purchasedAt: new Date().toISOString()
-      }]
-    })
-  }
+  setPurchased(prev => {
+    if (prev.some(p => p.id === card.id)) return prev
+    return [...prev, {
+      id: card.id,
+      name: card.name,
+      image: card.image,
+      price: card.price,
+      rarity: card.rarity,
+      types: card.types || [],
+      stats: card.stats || [],
+      height: card.height || 0,
+      weight: card.weight || 0,
+      statsTotal: card.statsTotal || 0,
+      purchasedAt: new Date().toISOString()
+    }]
+  })
+}
 
   const isPurchased = (cardId) => purchased.some(p => p.id === cardId)
 
