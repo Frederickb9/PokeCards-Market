@@ -1,11 +1,6 @@
 import React from 'react';
-// Asegúrate de que la ruta sea correcta según tu estructura de carpetas
 import logoPng from '../assets/poke_logo.png'; 
 
-/**
- * Header: PokéCards Market
- * UI/UX Senior Refactor: Glassmorphism, Premium Typography & Gold Gradients.
- */
 const Header = ({ view, onViewChange, collectionCount }) => {
   return (
     <header className="sticky top-0 z-30 bg-white/70 backdrop-blur-md border-b border-amber-100/50 shadow-sm">
